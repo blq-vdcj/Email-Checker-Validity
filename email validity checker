@@ -9,7 +9,11 @@ sheet = wb.active
 # Fonction pour vérifier la validité des adresses e-mail
 def est_email_valide(email):
     motif = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-    return re.match(motif, email) is not None
+    
+    # Vérifier si l'e-mail correspond au motif et s'il n'a pas deux points consécutifs à la fin
+    if re.match(motif, email) and not email.endswith(".."):
+        return True
+    return False
 
 # Vérifier toutes les lignes de la colonne A
 for row in range(1, sheet.max_row + 1):
