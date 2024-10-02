@@ -1,5 +1,6 @@
 import openpyxl
 import re
+import os
 
 # Charger le fichier Excel
 fichier = "email.xlsx"  # Nom du fichier
@@ -23,5 +24,16 @@ for row in range(1, sheet.max_row + 1):
         validité = "Valide" if est_email_valide(email) else "Invalide"
         sheet[f"B{row}"] = validité  # Écrire le résultat dans la colonne B
 
+# Déterminer le nom de fichier de sortie
+base_filename = "resultat_verification"
+extension = ".xlsx"
+filename = base_filename + extension
+counter = 1
+
+# Incrémenter le nom de fichier si le fichier existe déjà
+while os.path.exists(filename):
+    filename = f"{base_filename}_{counter}{extension}"
+    counter += 1
+
 # Sauvegarder les résultats dans un nouveau fichier
-wb.save("resultat_verification.xlsx")
+wb.save(filename)
