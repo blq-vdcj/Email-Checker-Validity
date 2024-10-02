@@ -2,7 +2,7 @@ import openpyxl
 import re
 
 # Charger le fichier Excel
-fichier = "ton_fichier.xlsx"  # Remplace par le nom de ton fichier
+fichier = "email.xlsx"  # Nom du fichier
 wb = openpyxl.load_workbook(fichier)
 sheet = wb.active
 
@@ -11,13 +11,13 @@ def est_email_valide(email):
     motif = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
     return re.match(motif, email) is not None
 
-# Vérifier les adresses de L1 à L1079
-for row in range(1, 1080):
-    cellule = f"L{row}"
+# Vérifier toutes les lignes de la colonne A
+for row in range(1, sheet.max_row + 1):
+    cellule = f"A{row}"
     email = sheet[cellule].value
     if email:
         validité = "Valide" if est_email_valide(email) else "Invalide"
-        sheet[f"M{row}"] = validité  # Écrire le résultat dans la colonne M
+        sheet[f"B{row}"] = validité  # Écrire le résultat dans la colonne B
 
 # Sauvegarder les résultats dans un nouveau fichier
 wb.save("resultat_verification.xlsx")
