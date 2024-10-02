@@ -4,37 +4,52 @@ import os
 
 # Charger le fichier Excel
 fichier = "email.xlsx"  # Nom du fichier
-wb = openpyxl.load_workbook(fichier)
-sheet = wb.active
+try:
+    wb = openpyxl.load_workbook(fichier)
+    sheet = wb.active
+except Exception as e:
+    with open("erreur_log.txt", "w") as error_file:
+        error_file.write(f"Une erreur est survenue lors du chargement du fichier : {e}\n")
+    print(f"Une erreur est survenue lors du chargement du fichier : {e}. Détails enregistrés dans erreur_log.txt.")
+    exit()
 
 # Fonction pour vérifier la validité des adresses e-mail
 def est_email_valide(email):
     motif = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
     
     # Vérifier si l'e-mail correspond au motif, ne contient pas ".." et ne se termine pas par .co
-    # sauf si c'est .edu.co, .org.co ou .com.co
+    # sauf si c'est .edu.co, .org.co, .com.co, .delete.com, ou gentherm.com
     if re.match(motif, email) and ".." not in email and not (email.endswith(".co") and not (email.endswith((".edu.co", ".org.co", ".com.co")))):
         return True
     return False
 
 # Vérifier toutes les lignes de la colonne A
-for row in range(1, sheet.max_row + 1):
-    cellule = f"A{row}"
-    email = sheet[cellule].value
-    if email:
-        validité = "Valide" if est_email_valide(email) else "Invalide"
-        sheet[f"B{row}"] = validité  # Écrire le résultat dans la colonne B
+try:
+    for row in range(1, sheet.max_row + 1):
+        cellule = f"A{row}"
+        email = sheet[cellule].value
+        if email:  # Vérifie que la cellule n'est pas vide
+            validité = "Valide" if est_email_valide(email) else "Invalide"
+            sheet[f"B{row}"] = validité  # Écrire le résultat dans la colonne B
+        else:
+            sheet[f"B{row}"] = "Invalide"  # Marquer comme invalide si la cellule est vide
 
-# Déterminer le nom de fichier de sortie
-base_filename = "resultat_verification"
-extension = ".xlsx"
-filename = base_filename + extension
-counter = 1
+    # Déterminer le nom de fichier de sortie
+    base_filename = "resultat_verification"
+    extension = ".xlsx"
+    filename = base_filename + extension
+    counter = 1
 
-# Incrémenter le nom de fichier si le fichier existe déjà
-while os.path.exists(filename):
-    filename = f"{base_filename}_{counter}{extension}"
-    counter += 1
+    # Incrémenter le nom de fichier si le fichier existe déjà
+    while os.path.exists(filename):
+        filename = f"{base_filename}_{counter}{extension}"
+        counter += 1
 
-# Sauvegarder les résultats dans un nouveau fichier
-wb.save(filename)
+    # Sauvegarder les résultats dans un nouveau fichier
+    wb.save(filename)
+    print(f"Les résultats ont été sauvegardés dans {filename}.")
+
+except Exception as e:
+    with open("erreur_log.txt", "w") as error_file:
+        error_file.write(f"Une erreur est survenue lors de l'exécution du script : {e}\n")
+    print(f"Une erreur est survenue lors de l'exécution du script : {e}. Détails enregistrés dans erreur_log.txt.")
