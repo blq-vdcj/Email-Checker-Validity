@@ -12,7 +12,8 @@ def est_email_valide(email):
     motif = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
     
     # Vérifier si l'e-mail correspond au motif, ne contient pas ".." et ne se termine pas par .co
-    if re.match(motif, email) and ".." not in email and not email.endswith(".co"):
+    # sauf si c'est .edu.co ou .org.co
+    if re.match(motif, email) and ".." not in email and not (email.endswith(".co") and not (email.endswith(".edu.co") or email.endswith(".org.co"))):
         return True
     return False
 
