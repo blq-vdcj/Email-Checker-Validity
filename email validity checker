@@ -49,7 +49,7 @@ try:
     # Save the results in a new file
     wb.save(filename)
     print("The script has been executed successfully.")
-    print(f'Your file is available under the name "{filename}".')
+    print(f'Your file has been saved as "{filename}".')
 
 except Exception as e:
     with open("error_log.txt", "w") as error_file:
